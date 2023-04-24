@@ -1,10 +1,10 @@
 from rest_framework import serializers
 
-from backend.models import Url
+from backend.models import Link
 
 
 class UrlSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Url
-        fields = ['url', 'score', 'upvotes','downvotes']
+        model = Link
+        fields = ['link', 'score', 'upvotes', 'downvotes']
 

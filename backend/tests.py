@@ -1,66 +1,50 @@
-from unittest import TestCase
-from backend.models import Url
+import json
+
+from django.test import TestCase
+from backend.models import Link
 
 # test data
-test_data = [{
-    "url": "https://www.yahoo.com/"
-    }
+test_data = [
+    {
+        "link": "https://www.dn.se"
+    },
+    {
+        "link": "https://api.le-systeme-solaire.net",
+    },
+    {
+        "link": "https://www.yahoo.com"
+    },
 ]
+
 
 class UrlTestCase(TestCase):
 
     def setUp(self):
         # create instance of model
         for test_product in test_data:
-            url = Url(**test_product)
-            url.save()
+            link = Link(**test_product)
+            link.save()
 
-    def test_product_database(self):
-        url = Url.objects.get(url='https://www.yahoo.com/')
+    def test_link_database(self):
+        link = Link.objects.get(link='https://api.le-systeme-solaire.net')
+        self.assertEqual(link.score, 0)
+        self.assertEqual(link.upvotes, 0)
+        self.assertEqual(link.downvotes, 0)
+
+    def test_link_view_all(self):
+        response = self.client.get('/api/links', follow=True)
+        self.assertEqual(len(response.data), 3)
+        self.assertEqual(response.data[0]['link'], 'https://api.le-systeme-solaire.net')
         self.assertTrue(True)
 
-    '''def test_product_view_all(self):
-        response = self.client.get('/shop/products', follow=True)
+    def test_link_view_with_id(self):
+        response = self.client.get('/api/links/3/', follow=True)
         response = json.loads(response.content.decode("utf-8"))
-        self.assertEqual(len(response), 3)
-    
-    
-    def test_product_view_with_id(self):
-        response = self.client.get('/shop/products?id=1', follow=True)
-        response = json.loads(response.content.decode("utf-8"))
-        self.assertEqual(len(response), 1)
-        self.assertEqual(response[0]['title'], 'prod_1')
-    
-    
-    def test_product_view_with_min(self):
-        response = self.client.get('/shop/products?min_price=2.0', follow=True)
-        response = json.loads(response.content.decode("utf-8"))
-        self.assertEqual(len(response), 2)
-        self.assertEqual(response[0]['title'], 'prod_2')
-    
-    
-    def test_product_view_with_max(self):
-        response = self.client.get('/shop/products?max_price=2.0', follow=True)
-        response = json.loads(response.content.decode("utf-8"))
-        self.assertEqual(len(response), 1)
-        self.assertEqual(response[0]['title'], 'prod_1')
-    
-    
-    def test_product_view_with_min_and_max(self):
-        response = self.client.get('/shop/products?min_price=2.0&max_price=11.0', follow=True)
-        response = json.loads(response.content.decode("utf-8"))
-        self.assertEqual(len(response), 1)
-        self.assertEqual(response[0]['title'], 'prod_2')
-    
-    
-    def test_product_view_with_category(self):
-        response = self.client.get('/shop/products?category=cat_2', follow=True)
-        response = json.loads(response.content.decode("utf-8"))
-        self.assertEqual(len(response), 2)
-        self.assertEqual(response[0]['title'], 'prod_2')
-    
-    
-    def test_product_view_with_non_exsiting_id(self):
-        response = self.client.get('/shop/products?id=4', follow=True)
-        response = json.loads(response.content.decode("utf-8"))
-        self.assertEqual(len(response), 0)'''
+        self.assertEqual(response['link'], 'https://www.yahoo.com')
+
+    '''def test_link_upvote(self):
+        response = self.client.get('/api/links/3/', follow=True)
+        self.assertEqual(response.data['score'], 0)
+        response = self.client.post(path='/api/links/3/upvote', data={})
+        response = self.client.get('/api/links/3', follow=True)
+        self.assertEqual(response.data['score'], 1)'''
