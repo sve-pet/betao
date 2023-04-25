@@ -46,7 +46,11 @@ class UrlTestCase(TestCase):
         link.score = 0
         link.upvotes = 0
         link.save()
-        self.client.post(path='/api/links/1/upvote', data={}, format='json', follow=True)
+        data = {}
+
+        response=self.client.post(path='/api/links/1/upvote/', data=data, format='json')
+        self.assertEqual(response.status_code, 200)
+
         response = self.client.get('/api/links/1', follow=True)
         self.assertEqual(response.data['score'], 1)
         self.assertEqual(response.data['upvotes'], 1)
@@ -57,7 +61,17 @@ class UrlTestCase(TestCase):
         link.downvotes = 0
         link.save()
 
-        self.client.post(path='/api/links/1/downvote', data={}, format='json', follow=True)
+        response=self.client.post(path='/api/links/1/downvote/', data={}, format='json')
+        self.assertEqual(response.status_code, 200)
+
         response = self.client.get('/api/links/1', follow=True)
         self.assertEqual(response.data['score'], 0)
         self.assertEqual(response.data['downvotes'], 1)
+
+    def test_create_link(self):
+        data = {
+            "link": "https://www.test.se"
+        }
+        response =self.client.post(path='/api/links/', data=data, format='json')
+        self.assertEqual(response.data['link'], "https://www.test.se")
+        self.assertEqual(response.status_code, 201)
