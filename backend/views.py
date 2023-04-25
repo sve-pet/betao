@@ -15,13 +15,13 @@ class UrlViewSet(viewsets.ModelViewSet):
     serializer_class = UrlSerializer
     http_method_names = ['get', 'post']
 
-    @action(methods=['post'], detail=True)
+    @action(methods=['post','get'], detail=True)
     def upvote(self, request, pk=None):
         Link.objects.filter(pk=pk).update(upvotes=F("upvotes") + 1, score=F("score") + 1)
         serializer = UrlSerializer(Link.objects.get(pk=pk))
         return Response(serializer.data)
 
-    @action(methods=['post'], detail=True)
+    @action(methods=['post','get'], detail=True)
     def downvote(self, request, pk=None):
         Link.objects.filter(pk=pk).update(downvotes=F("downvotes") + 1, score=F("score") - 1)
         serializer = UrlSerializer(Link.objects.get(pk=pk))

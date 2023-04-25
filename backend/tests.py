@@ -20,7 +20,6 @@ test_data = [
 class UrlTestCase(TestCase):
 
     def setUp(self):
-        # create instance of model
         for test_product in test_data:
             link = Link(**test_product)
             link.save()
@@ -42,9 +41,24 @@ class UrlTestCase(TestCase):
         response = json.loads(response.content.decode("utf-8"))
         self.assertEqual(response['link'], 'https://www.yahoo.com')
 
-    '''def test_link_upvote(self):
-        response = self.client.get('/api/links/3/', follow=True)
+    def test_link_upvote(self):
+        link = Link.objects.get(pk=1)
+        link.score = 0
+        link.upvotes = 0
+        link.save()
+        self.client.post(path='/api/links/1/upvote', data={}, format='json', follow=True)
+        response = self.client.get('/api/links/1', follow=True)
+        self.assertEqual(response.data['score'], 1)
+        self.assertEqual(response.data['upvotes'], 1)
+
+    def test_link_downvote(self):
+        link = Link.objects.get(pk=1)
+        link.score = 1
+        link.downvotes = 0
+        link.save()
+
+        self.client.post(path='/api/links/1/downvote', data={}, format='json', follow=True)
+        response = self.client.get('/api/links/1', follow=True)
         self.assertEqual(response.data['score'], 0)
-        response = self.client.post(path='/api/links/3/upvote', data={})
-        response = self.client.get('/api/links/3', follow=True)
-        self.assertEqual(response.data['score'], 1)'''
+        self.assertEqual(response.data['downvotes'], 1)
+
