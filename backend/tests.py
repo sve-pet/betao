@@ -61,4 +61,3 @@ class UrlTestCase(TestCase):
         response = self.client.get('/api/links/1', follow=True)
         self.assertEqual(response.data['score'], 0)
         self.assertEqual(response.data['downvotes'], 1)
-

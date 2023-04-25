@@ -7,4 +7,3 @@ class UrlSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Link
         fields = ['link', 'score', 'upvotes', 'downvotes']
-
